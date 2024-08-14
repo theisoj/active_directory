@@ -52,7 +52,7 @@ function CreateADUser(){
     # }
     $add_command="net localgroup administrators $Global:Domain\$username /add"
     foreach ($hostname in $userObject.local_admin){
-        echo "Invoke-Command -Computer $hostname -ScriptBlock { $add_command }" | Invoke-Expression
+        Write-Output "Invoke-Command -Computer $hostname -ScriptBlock { $add_command }" | Invoke-Expression
     }
 }
 
@@ -70,14 +70,14 @@ function WeakenPasswordPolicy(){
     secedit /export /cfg C:\Windows\Tasks\secpol.cfg
     (Get-Content C:\Windows\Tasks\secpol.cfg).replace("PasswordComplexity = 1", "PasswordComplexity = 0").replace("MinimumPasswordLength = 7", "MinimumPasswordLength = 1") | Out-File C:\Windows\Tasks\secpol.cfg
     secedit /configure /db c:\windows\security\local.sdb /cfg C:\Windows\Tasks\secpol.cfg /areas SECURITYPOLICY
-    rm -force C:\Windows\Tasks\secpol.cfg -confirm:$false
+    Remove-Item -Force C:\Windows\Tasks\secpol.cfg -confirm:$false
 }
 
 function StrengthenPasswordPolicy(){
     secedit /export /cfg C:\Windows\Tasks\secpol.cfg
     (Get-Content C:\Windows\Tasks\secpol.cfg).replace("PasswordComplexity = 0", "PasswordComplexity = 1").replace("MinimumPasswordLength = 1", "MinimumPasswordLength = 7") | Out-File C:\Windows\Tasks\secpol.cfg
     secedit /configure /db c:\windows\security\local.sdb /cfg C:\Windows\Tasks\secpol.cfg /areas SECURITYPOLICY
-    rm -force C:\Windows\Tasks\secpol.cfg -confirm:$false
+    Remove-Item -Force C:\Windows\Tasks\secpol.cfg -confirm:$false
 }
 
 
